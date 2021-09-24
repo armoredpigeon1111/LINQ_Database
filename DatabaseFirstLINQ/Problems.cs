@@ -381,7 +381,7 @@ namespace DatabaseFirstLINQ
             // b. Re-prompt the user for credentials
 
             bool signedIn = false;
-            string userEmail;
+           //string userEmail;
 
             while (signedIn != true)
             {
@@ -400,7 +400,7 @@ namespace DatabaseFirstLINQ
                         if (user.Password == password)
                         {
                             signedIn = true;
-                            userEmail = email;
+                            //userEmail = email;
                             Console.WriteLine("Signed In!");
                             UserInterface ui = new UserInterface();
                             ui.UserMenu(email);
@@ -469,9 +469,7 @@ namespace DatabaseFirstLINQ
                 public void ViewProducts()
                 {
                     var products = _context.Products;
-
-                    Console.WriteLine("\n--All Products--");
-                    
+                    Console.WriteLine("\n--All Products--");              
                     foreach(Product product in products)
                     {
                         Console.WriteLine($"Product: {product.Id}. {product.Name}");
@@ -479,6 +477,7 @@ namespace DatabaseFirstLINQ
 
                 }
 
+               //AddProduct won't add a product that already exsists in the user's cart 
                 public void AddProduct(string email)
                 {
                     Console.WriteLine("Enter Product ID to add to cart: ");
@@ -499,10 +498,12 @@ namespace DatabaseFirstLINQ
                 {
                     Console.WriteLine("Enter Product ID to remove from cart: ");
                     int userProductID = Convert.ToInt32(Console.ReadLine());
-                    
+                //Thought I might need userID because Shopping cart has productID and UserID as key pair
+                    var userId = _context.Users.Where(u => u.Email == email).Select(u => u.Id).SingleOrDefault();
+                //Forgive the below attempt
                     var product = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email).Where(ur => ur.ProductId == userProductID).SingleOrDefault();
-                    Console.WriteLine(product);    
-                    //_context.ShoppingCarts.Remove(productID);
+                      
+                    _context.ShoppingCarts.Remove(product);
                     _context.SaveChanges();
             }
             }
