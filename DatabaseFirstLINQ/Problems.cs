@@ -488,14 +488,32 @@ namespace DatabaseFirstLINQ
 
                     var productID = _context.Products.Where(r => r.Id == userProductID).Select(r => r.Id).SingleOrDefault();
                     var userId = _context.Users.Where(u => u.Email == email).Select(u => u.Id).SingleOrDefault();
-                    ShoppingCart newShoppingCart = new ShoppingCart()
-                    {
-                        ProductId = productID,
-                        UserId = userId,
-                    };
-                    _context.ShoppingCarts.Add(newShoppingCart);
-                    _context.SaveChanges();
+                    var userProducts = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email).Where(ur => ur.ProductId == productID).Select(ur => ur.ProductId);
+                    var cartProducts = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email).Where(ur => ur.ProductId == productID).ToList();
+                        
+                        if(userProducts == null)
+                        {
+                            ShoppingCart newShoppingCart = new ShoppingCart()
+                            {
+                                ProductId = productID,
+                                UserId = userId,
+                                
+                            };
+                            _context.ShoppingCarts.Add(newShoppingCart);
+                            _context.SaveChanges();
+                         }
+                        else
+                        {
+                            Console.WriteLine("add item");
+
+                            foreach(ShoppingCart cartProduct in cartProducts)
+                            {
+                                cartProduct.Quantity += 1;
+                            }
+                            
+                        }
                 }
+
 
                 //Allows user to remove product
                 public void RemoveProduct(string email) 
