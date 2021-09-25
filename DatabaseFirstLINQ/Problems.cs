@@ -477,7 +477,7 @@ namespace DatabaseFirstLINQ
 
                 }
 
-               //AddProduct won't add a product that already exsists in the user's cart 
+              
                 public void AddProduct(string email)
                 {
                     Console.WriteLine("Enter Product ID to add to cart: ");
@@ -498,14 +498,17 @@ namespace DatabaseFirstLINQ
                 {
                     Console.WriteLine("Enter Product ID to remove from cart: ");
                     int userProductID = Convert.ToInt32(Console.ReadLine());
-                //Thought I might need userID because Shopping cart has productID and UserID as key pair
+
                     var userId = _context.Users.Where(u => u.Email == email).Select(u => u.Id).SingleOrDefault();
-                //Forgive the below attempt
-                    var product = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email).Where(ur => ur.ProductId == userProductID).SingleOrDefault();
-                      
-                    _context.ShoppingCarts.Remove(product);
-                    _context.SaveChanges();
-            }
+                    var products = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email).Where(ur => ur.ProductId == userProductID).ToList() ;
+                
+                    foreach (ShoppingCart product in products) {
+                        Console.WriteLine(product.Product);
+                        _context.ShoppingCarts.Remove(product);
+                        _context.SaveChanges();
+                    }
+
+                }
             }
 
 
