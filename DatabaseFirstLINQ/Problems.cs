@@ -392,7 +392,7 @@ namespace DatabaseFirstLINQ
                 string password = Console.ReadLine();
                 var user = _context.Users.Where(u => u.Email == email).SingleOrDefault();
 
-
+                //User Sign in
                 if (user != null)
                 {
                     if (user.Email == email)
@@ -422,6 +422,7 @@ namespace DatabaseFirstLINQ
             }
         }
 
+            //User interface for bonus 3
             public class UserInterface {
                 
                 ECommerceContext _context = new ECommerceContext();
@@ -457,6 +458,7 @@ namespace DatabaseFirstLINQ
 
                 }
 
+                //Allows user to view items in cart
                 public void ViewCart(string email) 
                 {
                     var products = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email);
@@ -478,6 +480,7 @@ namespace DatabaseFirstLINQ
                 }
 
               
+                //Allows user to add product
                 public void AddProduct(string email)
                 {
                     Console.WriteLine("Enter Product ID to add to cart: ");
@@ -494,6 +497,7 @@ namespace DatabaseFirstLINQ
                     _context.SaveChanges();
                 }
 
+                //Allows user to remove product
                 public void RemoveProduct(string email) 
                 {
                     Console.WriteLine("Enter Product ID to remove from cart: ");
@@ -503,7 +507,6 @@ namespace DatabaseFirstLINQ
                     var products = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email).Where(ur => ur.ProductId == userProductID).ToList() ;
                 
                     foreach (ShoppingCart product in products) {
-                        Console.WriteLine(product.Product);
                         _context.ShoppingCarts.Remove(product);
                         _context.SaveChanges();
                     }
