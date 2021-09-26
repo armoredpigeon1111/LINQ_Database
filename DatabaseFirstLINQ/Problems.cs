@@ -497,16 +497,13 @@ namespace DatabaseFirstLINQ
                             ShoppingCart newShoppingCart = new ShoppingCart()
                             {
                                 ProductId = productID,
-                                UserId = userId,
-                                
+                                UserId = userId,                   
                             };
                             _context.ShoppingCarts.Add(newShoppingCart);
                             _context.SaveChanges();
                          }
                         else
                         {
-                            Console.WriteLine("add item");
-
                             foreach(ShoppingCart cartProduct in cartProducts)
                             {
                                 cartProduct.Quantity++;
@@ -527,16 +524,33 @@ namespace DatabaseFirstLINQ
 
                     var userId = _context.Users.Where(u => u.Email == email).Select(u => u.Id).SingleOrDefault();
                     var products = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email).Where(ur => ur.ProductId == userProductID).ToList() ;
-                
-                    foreach (ShoppingCart product in products) {
-                        _context.ShoppingCarts.Remove(product);
-                        _context.SaveChanges();
-                    }
 
+                    try 
+                    {
+                        if (products[0].Quantity > 1)
+                        {
+                            foreach (ShoppingCart product in products)
+                            {
+                                product.Quantity--;
+                                _context.ShoppingCarts.Update(product);
+                                _context.SaveChanges();
+                            }
+                        }
+                        else if (products[0].Quantity == 1)
+                        {
+                            foreach (ShoppingCart product in products)
+                            {
+                                _context.ShoppingCarts.Remove(product);
+                                _context.SaveChanges();
+                            }
+                        }
+                    }
+                    catch 
+                    {
+                        Console.WriteLine("No products with ID: " + userProductID);
+                    }
                 }
             }
-
-
     }
 
 }
