@@ -488,10 +488,11 @@ namespace DatabaseFirstLINQ
 
                     var productID = _context.Products.Where(r => r.Id == userProductID).Select(r => r.Id).SingleOrDefault();
                     var userId = _context.Users.Where(u => u.Email == email).Select(u => u.Id).SingleOrDefault();
-                    var userProducts = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email).Where(ur => ur.ProductId == productID).Select(ur => ur.ProductId);
+                    var userProducts = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email).Where(ur => ur.ProductId == productID).Select(ur => ur.ProductId).SingleOrDefault();
                     var cartProducts = _context.ShoppingCarts.Include(ur => ur.Product).Include(ur => ur.User).Where(ur => ur.User.Email == email).Where(ur => ur.ProductId == productID).ToList();
-                        
-                        if(userProducts == null)
+
+                Console.WriteLine(userProducts);
+                        if(userProducts == 0)
                         {
                             ShoppingCart newShoppingCart = new ShoppingCart()
                             {
@@ -508,7 +509,8 @@ namespace DatabaseFirstLINQ
 
                             foreach(ShoppingCart cartProduct in cartProducts)
                             {
-                                cartProduct.Quantity += 1;
+                                cartProduct.Quantity++;
+
                             }
                             
                         }
