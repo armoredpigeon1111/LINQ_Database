@@ -511,6 +511,8 @@ namespace DatabaseFirstLINQ
                             {
                                 cartProduct.Quantity++;
 
+                                _context.ShoppingCarts.Update(cartProduct);
+                                _context.SaveChanges();
                             }
                             
                         }
